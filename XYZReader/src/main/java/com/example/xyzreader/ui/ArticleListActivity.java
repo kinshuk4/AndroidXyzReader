@@ -49,13 +49,12 @@ public class ArticleListActivity extends ActionBarActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article_list);
         ButterKnife.bind(this);
-
-        final View toolbarContainerView = findViewById(R.id.toolbar_container);
-
+        
         getLoaderManager().initLoader(0, null, this);
 
         if (savedInstanceState == null) {
             refresh();
+			mSwipeRefreshLayout.setEnabled(false);
         }
     }
 
@@ -99,6 +98,7 @@ public class ArticleListActivity extends ActionBarActivity implements
 
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+        mSwipeRefreshLayout.setRefreshing(false);
         Adapter adapter = new Adapter(cursor);
         adapter.setHasStableIds(true);
         mRecyclerView.setAdapter(adapter);
@@ -165,11 +165,11 @@ public class ArticleListActivity extends ActionBarActivity implements
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.thumbnail)
-        public DynamicHeightNetworkImageView thumbnailView;
+        DynamicHeightNetworkImageView thumbnailView;
         @Bind(R.id.article_title)
-        public TextView titleView;
+        TextView titleView;
         @Bind(R.id.article_subtitle)
-        public TextView subtitleView;
+        TextView subtitleView;
 
         public ViewHolder(View view) {
             super(view);
