@@ -11,6 +11,9 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +21,7 @@ import android.text.Html;
 import android.text.format.DateUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,11 +54,18 @@ public class ArticleDetailFragment extends Fragment implements
     private int mMutedColor = 0xFF333333;
 
 
+    @Nullable
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
 
     @Bind(R.id.photo)
     ImageView mPhotoView;
+
+    @Bind(R.id.scroll_appbar)
+    AppBarLayout appBarLayout;
+
+    @Nullable @Bind(R.id.collapsingToolbarLayout)
+    CollapsingToolbarLayout collapsingToolbarLayout;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -117,7 +128,29 @@ public class ArticleDetailFragment extends Fragment implements
         });
 
         bindViews();
+
         return mRootView;
+    }
+
+    private void setCollabibleTitle(final String title){
+        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            boolean isShow = false;
+            int scrollRange = -1;
+
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.getTotalScrollRange();
+                }
+                if (scrollRange + verticalOffset == 0) {
+                    collapsingToolbarLayout.setTitle("      "+title);
+                    isShow = true;
+                } else if(isShow) {
+                    collapsingToolbarLayout.setTitle(" ");//careful there should a space between double quote otherwise it wont work
+                    isShow = false;
+                }
+            }
+        });
     }
 
 
@@ -136,7 +169,9 @@ public class ArticleDetailFragment extends Fragment implements
             mRootView.setAlpha(0);
             mRootView.setVisibility(View.VISIBLE);
             mRootView.animate().alpha(1);
+
             titleView.setText(mCursor.getString(ArticleLoader.Query.TITLE));
+            setCollabibleTitle(mCursor.getString(ArticleLoader.Query.TITLE));
             bylineView.setText(Html.fromHtml(
                     DateUtils.getRelativeTimeSpanString(
                             mCursor.getLong(ArticleLoader.Query.PUBLISHED_DATE),
