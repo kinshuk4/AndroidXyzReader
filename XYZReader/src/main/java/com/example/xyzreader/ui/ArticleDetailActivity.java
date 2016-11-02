@@ -20,6 +20,8 @@ import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
 import com.example.xyzreader.data.ItemsContract;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 /**
  * An activity representing a single Article detail screen, letting you swipe between articles.
  */
@@ -33,10 +35,13 @@ public class ArticleDetailActivity extends ActionBarActivity
     private int mSelectedItemUpButtonFloor = Integer.MAX_VALUE;
     private int mTopInset;
 
-    private ViewPager mPager;
+    @Bind(R.id.pager)
+    ViewPager mPager;
     private MyPagerAdapter mPagerAdapter;
-    private View mUpButtonContainer;
-    private View mUpButton;
+    @Bind(R.id.up_container)
+    View mUpButtonContainer;
+    @Bind(R.id.action_up)
+    View mUpButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,10 +53,12 @@ public class ArticleDetailActivity extends ActionBarActivity
         }
         setContentView(R.layout.activity_article_detail);
 
+        ButterKnife.bind(this);
+
         getLoaderManager().initLoader(0, null, this);
 
         mPagerAdapter = new MyPagerAdapter(getFragmentManager());
-        mPager = (ViewPager) findViewById(R.id.pager);
+
         mPager.setAdapter(mPagerAdapter);
         mPager.setPageMargin((int) TypedValue
                 .applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics()));
@@ -76,9 +83,7 @@ public class ArticleDetailActivity extends ActionBarActivity
             }
         });
 
-        mUpButtonContainer = findViewById(R.id.up_container);
 
-        mUpButton = findViewById(R.id.action_up);
         mUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
