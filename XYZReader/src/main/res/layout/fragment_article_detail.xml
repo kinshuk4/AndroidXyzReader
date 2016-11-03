@@ -115,6 +115,8 @@
         app:borderWidth="0dp"
         app:elevation="@dimen/fab_elevation"
         app:pressedTranslationZ="@dimen/fab_press_translation_z"
-        app:fabSize="normal" />
+        app:fabSize="normal"
+        app:layout_behavior="com.example.xyzreader.ui.ScrollAwareFABBehavior"
+        />
 
 </android.support.design.widget.CoordinatorLayout>
